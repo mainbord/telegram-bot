@@ -37,7 +37,7 @@ public class BotEipClient extends TelegramLongPollingBot {
         return BOT_TOKEN;
     }
 
-    private final static String BOT_TOKEN = "";
+    private final static String BOT_TOKEN = "888179130:AAHw8xyemmqbSLNEB4GzMbghVVbO6ZhnIxs";
 
     //   EipRitBot
 }
