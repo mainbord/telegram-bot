@@ -1,6 +1,7 @@
 plugins {
-    id 'java'
     id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'application'
+    id 'java'
 }
 
 
@@ -28,6 +29,10 @@ jar {
     manifest {
         attributes 'Main-Class': 'ru.rt.bot.service.Service'
     }
+}
+
+application {
+    mainClassName = 'ru.rt.bot.service.Service'
 }
 
 task stage(dependsOn: ['shadowJar', 'clean'])
