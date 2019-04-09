@@ -29,11 +29,12 @@ jar {
     manifest {
         attributes 'Main-Class': 'ru.rt.bot.service.Service'
     }
+    from configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
 application {
     mainClassName = 'ru.rt.bot.service.Service'
 }
 
-task stage(dependsOn: ['shadowJar', 'clean'])
+task stage(dependsOn: ['jar', 'clean'])
 build.mustRunAfter clean
