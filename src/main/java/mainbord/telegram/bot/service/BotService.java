@@ -1,8 +1,9 @@
 package mainbord.telegram.bot.service;
 
 import lombok.extern.log4j.Log4j2;
-import mainbord.telegram.bot.client.OpenWeatherClient;
-import mainbord.telegram.bot.client.RzhunemoguClient;
+import mainbord.telegram.bot.client.impl.ForismaticClient;
+import mainbord.telegram.bot.client.impl.OpenWeatherClient;
+import mainbord.telegram.bot.client.impl.RzhunemoguClient;
 import mainbord.telegram.bot.config.AppConfig;
 import mainbord.telegram.bot.domain.openweather.OpenWeatherResponse;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
@@ -16,6 +17,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Objects.isNull;
+
 @Log4j2
 public class BotService extends TelegramLongPollingBot {
 
@@ -23,6 +26,17 @@ public class BotService extends TelegramLongPollingBot {
 
     private final RzhunemoguClient rzhunemoguClient = new RzhunemoguClient();
     private final OpenWeatherClient openWeatherClient = new OpenWeatherClient();
+    private final ForismaticClient forismaticClient = new ForismaticClient();
+
+    @Override
+    public String getBotUsername() {
+        return "MainbordBot";
+    }
+
+    @Override
+    public String getBotToken() {
+        return BOT_TOKEN;
+    }
 
     private ThreadPoolExecutor executor = new ThreadPoolExecutor(
             1, 10,
@@ -32,6 +46,9 @@ public class BotService extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
+        if (Strings.isNotEmpty(message)) {
+            return;
+        }
         executor.execute(() -> sendMsg(update.getMessage().getChatId().toString(), message));
     }
 
@@ -42,9 +59,10 @@ public class BotService extends TelegramLongPollingBot {
         if (Strings.isNotEmpty(s)) {
             if (s.toLowerCase().contains("анекдот")) {
                 s = getRandomAnekdot();
-            }
-            if (s.toLowerCase().contains("погода")) {
+            } else if (s.toLowerCase().contains("погода")) {
                 s = getWeather();
+            } else if (s.toLowerCase().contains("цитата")) {
+                s = getRandomQuotation();
             }
         }
         sendMessage.setText(s);
@@ -53,16 +71,6 @@ public class BotService extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return "MainbordBot";
-    }
-
-    @Override
-    public String getBotToken() {
-        return BOT_TOKEN;
     }
 
     private String getRandomAnekdot() {
@@ -83,5 +91,9 @@ public class BotService extends TelegramLongPollingBot {
             sb.append("\n");
         });
         return sb.toString();
+    }
+
+    private String getRandomQuotation() {
+        return isNull(forismaticClient.getRandomQuotation()) ? "" : forismaticClient.getRandomQuotation().getQuoteText();
     }
 }

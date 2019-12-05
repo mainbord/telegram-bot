@@ -1,8 +1,9 @@
-package mainbord.telegram.bot.client;
+package mainbord.telegram.bot.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import mainbord.telegram.bot.UtilTest;
+import mainbord.telegram.bot.client.impl.OpenWeatherClient;
 import mainbord.telegram.bot.domain.openweather.OpenWeatherResponse;
 import org.junit.jupiter.api.Test;
 

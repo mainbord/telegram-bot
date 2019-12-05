@@ -1,7 +1,8 @@
-package mainbord.telegram.bot.client;
+package mainbord.telegram.bot.client.impl;
 
 import lombok.SneakyThrows;
 import mainbord.telegram.bot.UtilTest;
+import mainbord.telegram.bot.client.impl.RzhunemoguClient;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguResponse;
 import org.junit.jupiter.api.Assertions;

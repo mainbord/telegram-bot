@@ -1,4 +1,4 @@
-package mainbord.telegram.bot.client;
+package mainbord.telegram.bot.client.impl;
 
 import feign.Feign;
 import feign.Request;
@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
+import mainbord.telegram.bot.client.OpenWeatherFeignClient;
 import mainbord.telegram.bot.config.AppConfig;
 import mainbord.telegram.bot.domain.openweather.OpenWeatherResponse;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @Log4j2
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OpenWeatherClient {
+public class OpenWeatherClient implements OpenWeatherFeignClient{
 
     final String APP_ID = AppConfig.getProperties().getProperty("client.open_weather.appid");
     final OpenWeatherFeignClient feignClient;
@@ -56,4 +57,8 @@ public class OpenWeatherClient {
         return feignClient.getWeather(params);
     }
 
+    @Override
+    public OpenWeatherResponse getWeather(Map<String, String> params) {
+        return null;
+    }
 }

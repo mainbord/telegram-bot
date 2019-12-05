@@ -1,10 +1,11 @@
-package mainbord.telegram.bot.client;
+package mainbord.telegram.bot.client.impl;
 
 import feign.Feign;
 import feign.Request;
 import feign.jaxb.JAXBEncoder;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import mainbord.telegram.bot.client.RzhunemoguFeignClient;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
 import mainbord.telegram.bot.config.AppConfig;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguResponse;
@@ -18,7 +19,7 @@ import java.util.Map;
 import static java.util.Optional.ofNullable;
 
 @Log4j2
-public class RzhunemoguClient {
+public class RzhunemoguClient implements RzhunemoguFeignClient {
 
     private final RzhunemoguFeignClient feignClient;
     private final String rzhunemoguEndpoint = AppConfig.getProperties().getProperty("client.rzhunemogu.url");
@@ -57,5 +58,10 @@ public class RzhunemoguClient {
         String response = new String(feignClient.getRandomJoke(params), "windows-1251");
         return ofNullable(((RzhunemoguResponse) jaxbMarshaller.unmarshal(new StringReader(response))))
                 .orElse(RzhunemoguResponse.builder().build()).getContent();
+    }
+
+    @Override
+    public byte[] getRandomJoke(Map<String, String> params) {
+        return new byte[0];
     }
 }
