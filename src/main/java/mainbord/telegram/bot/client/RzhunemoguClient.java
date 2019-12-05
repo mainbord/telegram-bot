@@ -1,6 +1,7 @@
 package mainbord.telegram.bot.client;
 
 import feign.Feign;
+import feign.Request;
 import feign.jaxb.JAXBEncoder;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -21,6 +22,8 @@ public class RzhunemoguClient {
 
     private final RzhunemoguFeignClient feignClient;
     private final String rzhunemoguEndpoint = AppConfig.getProperties().getProperty("client.rzhunemogu.url");
+    private final Integer connectTimeoutInMS = 7000;
+    private final Integer readTimeoutInMs = 7000;
 
     @SneakyThrows
     public RzhunemoguClient() {
@@ -39,6 +42,7 @@ public class RzhunemoguClient {
                 .logLevel(feign.Logger.Level.FULL)
                 .encoder(new JAXBEncoder(jaxbFactory))
 //                .decoder(new JAXBDecoder(jaxbFactory))
+                .options(new Request.Options(connectTimeoutInMS, readTimeoutInMs))
                 .target(RzhunemoguFeignClient.class, rzhunemoguEndpoint);
     }
 

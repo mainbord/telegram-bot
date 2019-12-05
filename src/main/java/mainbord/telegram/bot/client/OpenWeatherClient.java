@@ -1,6 +1,7 @@
 package mainbord.telegram.bot.client;
 
 import feign.Feign;
+import feign.Request;
 import feign.jackson.JacksonDecoder;
 import lombok.AccessLevel;
 import lombok.SneakyThrows;
@@ -27,6 +28,9 @@ public class OpenWeatherClient {
     final String UNITS_PARAM = "units";
     final String DAYS_PARAM = "cnt";
 
+    private final Integer connectTimeoutInMS = 7000;
+    private final Integer readTimeoutInMs = 7000;
+
     @SneakyThrows
     public OpenWeatherClient() {
         this.feignClient = Feign.builder()
@@ -38,6 +42,7 @@ public class OpenWeatherClient {
                 })
                 .logLevel(feign.Logger.Level.FULL)
                 .decoder(new JacksonDecoder())
+                .options(new Request.Options(connectTimeoutInMS, readTimeoutInMs))
                 .target(OpenWeatherFeignClient.class, openWeatherEndpoint);
     }
 

@@ -12,6 +12,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 @Log4j2
 public class BotService extends TelegramLongPollingBot {
 
@@ -20,13 +24,18 @@ public class BotService extends TelegramLongPollingBot {
     private final RzhunemoguClient rzhunemoguClient = new RzhunemoguClient();
     private final OpenWeatherClient openWeatherClient = new OpenWeatherClient();
 
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            1, 10,
+            60L, TimeUnit.SECONDS,
+            new SynchronousQueue<>());
+
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
-        sendMsg(update.getMessage().getChatId().toString(), message);
+        executor.execute(() -> sendMsg(update.getMessage().getChatId().toString(), message));
     }
 
-    private synchronized void sendMsg(String chatId, String s) {
+    private void sendMsg(String chatId, String s) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -56,11 +65,11 @@ public class BotService extends TelegramLongPollingBot {
         return BOT_TOKEN;
     }
 
-    private String getRandomAnekdot(){
+    private String getRandomAnekdot() {
         return rzhunemoguClient.getRandomAnekdotJoke(RzhunemoguRandomRequestType.JOKE);
     }
 
-    private String getWeather(){
+    private String getWeather() {
         OpenWeatherResponse response = openWeatherClient.getWeather(1, "Moscow");
         StringBuilder sb = new StringBuilder();
         sb.append(response.getCity().getName());

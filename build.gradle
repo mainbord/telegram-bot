@@ -29,12 +29,10 @@ dependencies {
     implementation "javax.xml.bind:jaxb-api:2.4.0-b180830.0359"
     implementation "com.sun.xml.bind:jaxb-impl:2.4.0-b180830.0438"
     implementation "com.sun.istack:istack-commons-runtime:3.0.9"
-
     // feign client
     implementation "io.github.openfeign:feign-core:${feignVersion}"
     implementation "io.github.openfeign:feign-jaxb:${feignVersion}"
     implementation "io.github.openfeign:feign-jackson:${feignVersion}"
-
     // test
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -54,4 +52,12 @@ jar {
 
 application {
     mainClassName = "mainbord.telegram.bot.TelegramBotApplication"
+}
+
+test{
+    useJUnitPlatform()
+    dependsOn 'cleanTest'
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
