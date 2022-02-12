@@ -1,20 +1,20 @@
 package mainbord.telegram.bot.client.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
 import mainbord.telegram.bot.UtilTest;
-import mainbord.telegram.bot.client.impl.RzhunemoguClient;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 
 class RzhunemoguClientTest {
 
-    private RzhunemoguClient rzhunemoguClient = new RzhunemoguClient();
+    private final RzhunemoguClient rzhunemoguClient = new RzhunemoguClient();
 
     @Test
     public void getRandomAnekdotJoke() {
@@ -24,10 +24,14 @@ class RzhunemoguClientTest {
 
     @Test
     @SneakyThrows
-    public void jaxbTest(){
-        JAXBContext jaxbContext = JAXBContext.newInstance(RzhunemoguResponse.class);
-        Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
-        RzhunemoguResponse response = (RzhunemoguResponse) jaxbMarshaller.unmarshal(new StringReader(UtilTest.getTestObjectFromResources("RzhunemoguResponse.xml")));
+    public void jaxbTest() {
+        JacksonXmlModule xmlModule = new JacksonXmlModule();
+        xmlModule.setDefaultUseWrapper(false);
+        ObjectMapper objectMapper = new XmlMapper(xmlModule);
+
+        RzhunemoguResponse response = objectMapper.reader().readValue(
+                new StringReader(UtilTest.getTestObjectFromResources("RzhunemoguResponse.xml")),
+                RzhunemoguResponse.class);
         Assertions.assertNotNull(response.getContent());
         System.out.println(response.getContent());
     }

@@ -1,22 +1,18 @@
 package mainbord.telegram.bot.client.impl;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import feign.Feign;
 import feign.Request;
-import feign.jaxb.JAXBEncoder;
+import feign.jackson.JacksonDecoder;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import mainbord.telegram.bot.client.RzhunemoguFeignClient;
-import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
 import mainbord.telegram.bot.config.AppConfig;
+import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguRandomRequestType;
 import mainbord.telegram.bot.domain.rzhunemogu.RzhunemoguResponse;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Optional.ofNullable;
 
 @Log4j2
 public class RzhunemoguClient implements RzhunemoguFeignClient {
@@ -28,11 +24,6 @@ public class RzhunemoguClient implements RzhunemoguFeignClient {
 
     @SneakyThrows
     public RzhunemoguClient() {
-        feign.jaxb.JAXBContextFactory jaxbFactory = new feign.jaxb.JAXBContextFactory.Builder()
-//                .withProperty(Marshaller.JAXB_ENCODING, "windows-1251")
-                .withMarshallerJAXBEncoding("windows-1251")
-                .withMarshallerFormattedOutput(true)
-                .build();
         this.feignClient = Feign.builder()
                 .logger(new feign.Logger() {
                     @Override
@@ -41,27 +32,20 @@ public class RzhunemoguClient implements RzhunemoguFeignClient {
                     }
                 })
                 .logLevel(feign.Logger.Level.FULL)
-                .encoder(new JAXBEncoder(jaxbFactory))
-//                .decoder(new JAXBDecoder(jaxbFactory))
+                .decoder(new JacksonDecoder(new XmlMapper()))
                 .options(new Request.Options(connectTimeoutInMS, readTimeoutInMs))
                 .target(RzhunemoguFeignClient.class, rzhunemoguEndpoint);
     }
 
-    //TODO нормально настроить декодер феин клиента, у ржунемогу по ходу ошибка в теле запроса кодировка utf-8
-    // а в http заголовке windows-1251, ну и по ходу декодер смотрит на кодировку в теле
     @SneakyThrows
     public String getRandomAnekdotJoke(RzhunemoguRandomRequestType cType) {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RzhunemoguResponse.class);
-        Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
         Map<String, String> params = new HashMap<>();
         params.put("CType", String.valueOf(cType.getcType()));
-        String response = new String(feignClient.getRandomJoke(params), "windows-1251");
-        return ofNullable(((RzhunemoguResponse) jaxbMarshaller.unmarshal(new StringReader(response))))
-                .orElse(RzhunemoguResponse.builder().build()).getContent();
+        return feignClient.getRandomJoke(params).getContent();
     }
 
     @Override
-    public byte[] getRandomJoke(Map<String, String> params) {
-        return new byte[0];
+    public RzhunemoguResponse getRandomJoke(Map<String, String> params) {
+        return RzhunemoguResponse.builder().build();
     }
 }

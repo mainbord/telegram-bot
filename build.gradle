@@ -1,34 +1,29 @@
 buildscript {
     ext{
-        lombokVersion = "1.18.10"
-        feignVersion = "10.4.0"
-        jacksonVersion = "2.9.10"
+        lombokVersion = "1.18.22"
+        feignVersion = "11.8"
+        jacksonVersion = "2.13.1"
     }
 }
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.1.0" // make jar file with dependencies
+    id "com.github.johnrengelman.shadow" version "7.1.2" // make jar file with dependencies
     id "application" // start app from gradle
 }
 
 
-group "mainbord.telegram"
+group "com.mcorp"
 version "0.2.0"
-sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.telegram:telegrambots:4.4.0.1"
-    implementation "org.telegram:telegrambotsextensions:4.4.0.1"
+    implementation 'org.telegram:telegrambots:5.7.1'
+    implementation 'org.telegram:telegrambotsextensions:5.7.1'
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    // jaxb
-    implementation "javax.xml.bind:jaxb-api:2.4.0-b180830.0359"
-    implementation "com.sun.xml.bind:jaxb-impl:2.4.0-b180830.0438"
-    implementation "com.sun.istack:istack-commons-runtime:3.0.9"
     // feign client
     implementation "io.github.openfeign:feign-core:${feignVersion}"
     implementation "io.github.openfeign:feign-jaxb:${feignVersion}"
@@ -40,10 +35,12 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
     // logging
-    implementation "org.apache.logging.log4j:log4j-core:2.12.1"
+    implementation "org.apache.logging.log4j:log4j-core:2.17.1"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
+
 }
 
 jar {
