@@ -1,6 +1,6 @@
 .gradle
 /build/
-/applogs/
+applogs/
 /out/
 out/
 !gradle/wrapper/gradle-wrapper.jar

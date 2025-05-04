@@ -1,13 +1,14 @@
 buildscript {
     ext{
-        lombokVersion = "1.18.22"
-        feignVersion = "11.8"
-        jacksonVersion = "2.13.1"
+        lombokVersion = "1.18.38"
+        jacksonVersion = "2.19.0"
+        feignVersion = "13.6"
+        telegramVersion = "6.9.7.1"
     }
 }
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2" // make jar file with dependencies
+    id "com.github.johnrengelman.shadow" version "8.1.1" // make jar file with dependencies
     id "application" // start app from gradle
 }
 
@@ -20,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.telegram:telegrambots:5.7.1'
-    implementation 'org.telegram:telegrambotsextensions:5.7.1'
+    implementation "org.telegram:telegrambots:${telegramVersion}"
+    implementation "org.telegram:telegrambotsextensions:${telegramVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     // feign client
@@ -32,10 +33,14 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     // junit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.12.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.12.2"
     // logging
-    implementation "org.apache.logging.log4j:log4j-core:2.17.1"
+    implementation "org.apache.logging.log4j:log4j-core:2.24.3"
+    implementation "org.apache.logging.log4j:log4j-api:2.24.3"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:2.24.3"
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3")
+
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
@@ -49,12 +54,4 @@ jar {
 
 application {
     mainClassName = "mainbord.telegram.bot.TelegramBotApplication"
-}
-
-test{
-    useJUnitPlatform()
-    dependsOn 'cleanTest'
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
 }
